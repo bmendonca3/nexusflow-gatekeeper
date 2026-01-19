@@ -1,4 +1,32 @@
 ================================================================================
+PROJECT CONTEXT
+================================================================================
+What is NexusFlow Gatekeeper?
+
+A Cyber-Physical Digital Twin that demonstrates:
+• Real-time distributed state synchronization across multiple clients
+• A "Healer Protocol" - reliable messaging with ACK loops, retries, and deduplication
+• Chaos engineering controls to test system resilience under network failures
+
+Why did I build it?
+To prove AI coding assistants (MiniMax) can build complex, production-ready distributed systems - not just simple todo apps.
+
+The Automation (E2E Flow):
+1. Playwright E2E tests verify state sync across Commander and Observer clients
+2. Tests simulate emergency triggers and verify propagation
+3. MCP Vision (MiniMax) analyzes screenshots to verify visual state changes
+4. CI/CD pipeline runs automated tests on every push
+5. Tests run in parallel contexts to simulate real distributed systems
+
+The Stack:
+• React + React Flow (digital twin visualization)
+• Zustand + zustand-persist (state management)
+• BroadcastChannel + WebSocket (dual transport layer)
+• Playwright + MCP Vision (E2E testing with AI verification)
+• TypeScript strict mode (production-ready code)
+• GitHub Actions CI/CD
+
+================================================================================
 TWEET 1 (Hook)
 ================================================================================
 I built a Cyber-Physical Digital Twin dashboard with MiniMax 🎯
