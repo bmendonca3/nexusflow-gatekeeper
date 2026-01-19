@@ -1,0 +1,68 @@
+{
+  "name": "nexusflow-gatekeeper",
+  "version": "1.0.0",
+  "description": "Cyber-Physical Digital Twin Dashboard with Healer Protocol for reliable distributed state synchronization",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "build": "tsc && vite build",
+    "server": "tsx server/index.ts",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+  },
+  "keywords": [
+    "digital-twin",
+    "distributed-systems",
+    "real-time",
+    "websocket",
+    "react-flow",
+    "ack-loop",
+    "chaos-engineering"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^25.0.9",
+    "@types/pino": "^7.0.5",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "concurrently": "^9.0.1",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^17.0.0",
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.17"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "lucide-react": "^0.562.0",
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "reactflow": "^11.11.4",
+    "socket.io": "^4.8.0",
+    "socket.io-client": "^4.8.0",
+    "uuid": "^10.0.0",
+    "zustand": "^5.0.10"
+  }
+}
