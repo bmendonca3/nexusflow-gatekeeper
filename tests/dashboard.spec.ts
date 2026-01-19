@@ -208,7 +208,7 @@ export async function verifyVisualSyncWithMCP(
 
   const timestamp = Date.now();
 
-  const [commanderPath, observerPath] = await Promise.all([
+  const [commanderPathBuffer, observerPathBuffer] = await Promise.all([
     pageA.screenshot({
       path: path.join(screenshotDir, `commander-${expectedState}-${timestamp}.png`),
       fullPage: true,
@@ -220,6 +220,9 @@ export async function verifyVisualSyncWithMCP(
       animations: 'disabled',
     }),
   ]);
+
+  const commanderPath = String(commanderPathBuffer);
+  const observerPath = String(observerPathBuffer);
 
   const analysis = `
     === MCP VISION ANALYSIS ===

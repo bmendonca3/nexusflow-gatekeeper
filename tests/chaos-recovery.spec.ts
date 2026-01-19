@@ -4,8 +4,8 @@ import fs from 'fs';
 import { analyzeWithMiniMax, parseColorState } from './vision-mcp';
 
 // ACK Loop constants (matching store.ts)
+// NOTE: ACK_TIMEOUT_MS reserved for future ACK loop implementation
 const MAX_RETRY_ATTEMPTS = 5;
-const ACK_TIMEOUT_MS = 300;
 
 /**
  * NexusFlow Gatekeeper - Phase 2: The Chaos Loop
@@ -1004,7 +1004,7 @@ test.describe('Phase 2: The Chaos Loop', () => {
    */
   function makeGONoGoDecision(
     conflictDetected: boolean,
-    diagnosticReport: DiagnosticReport
+    _diagnosticReport: DiagnosticReport
   ): VisualGhostReport['gatekeeperDecision'] {
     if (conflictDetected) {
       return {

@@ -61,8 +61,10 @@ test.describe('1. Multi-Context Isolation (ShadowUser Class)', () => {
     const observerCookies = await observerPage.context().cookies();
 
     // Log cookies for verification
-    console.log('Commander cookies:', commanderCookies.map(c => c.name));
-    console.log('Observer cookies:', observerCookies.map(c => c.name));
+    const commanderCookieNames = commanderCookies.map((c: { name: string }) => c.name);
+    const observerCookieNames = observerCookies.map((c: { name: string }) => c.name);
+    console.log('Commander cookies:', commanderCookieNames);
+    console.log('Observer cookies:', observerCookieNames);
 
     // Verify isolation - Commander should have the test cookie, Observer should not
     const commanderHasSession = commanderCookies.some(c => c.name === 'test_session');
