@@ -410,7 +410,7 @@ export const useNexusStore = create<NexusStore>()(
         }
 
         if (psAny.appliedMessageIds) {
-          converted.appliedMessageIds = new Set<string>(psAny.appliedMessageIds as string[]);
+          converted.appliedMessageIds = new Set<string>(psAny.appliedMessageIds as unknown as string[]);
         }
 
         return converted;

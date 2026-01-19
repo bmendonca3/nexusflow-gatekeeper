@@ -254,7 +254,7 @@ export async function captureSyncScreenshots(
   const filenameA = `${prefix}-pageA-${timestamp}.png`;
   const filenameB = `${prefix}-pageB-${timestamp}.png`;
 
-  const [pathA, pathB] = await Promise.all([
+  const [_pathA, _pathB] = await Promise.all([
     pageA.screenshot({
       path: path.join(VISION_SCREENSHOTS_DIR, filenameA),
       fullPage: true,
@@ -340,7 +340,7 @@ export async function verifyVisualSyncWithMCP(
 
     // Extract position if available
     const positionA = parsePosition(analysisA);
-    const positionB = parsePosition(analysisB);
+    const _positionB = parsePosition(analysisB);
 
     return {
       differences: synchronized ? [] : ['Visual state mismatch between Commander and Observer'],

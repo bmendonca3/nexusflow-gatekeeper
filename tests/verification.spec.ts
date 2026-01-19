@@ -67,8 +67,8 @@ test.describe('1. Multi-Context Isolation (ShadowUser Class)', () => {
     console.log('Observer cookies:', observerCookieNames);
 
     // Verify isolation - Commander should have the test cookie, Observer should not
-    const commanderHasSession = commanderCookies.some(c => c.name === 'test_session');
-    const observerHasSession = observerCookies.some(c => c.name === 'test_session');
+    const commanderHasSession = commanderCookies.some((c: { name: string }) => c.name === 'test_session');
+    const observerHasSession = observerCookies.some((c: { name: string }) => c.name === 'test_session');
 
     expect(commanderHasSession).toBe(true);
     expect(observerHasSession).toBe(false); // Observer is isolated
@@ -106,7 +106,7 @@ test.describe('1. Multi-Context Isolation (ShadowUser Class)', () => {
     await localPage.waitForTimeout(500);
 
     // Get process info (mock check)
-    const pid = 1234;
+    const _pid = 1234;
 
     // Cleanup
     await localContext.close();
@@ -132,12 +132,9 @@ test.describe('1. Multi-Context Isolation (ShadowUser Class)', () => {
 // ============================================
 
 test.describe('2. Digital Twin (The App) Baseline', () => {
-  let page: any;
-
   test.beforeEach(async () => {
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
-    page = await context.newPage();
     await context.close();
     await browser.close();
   });
