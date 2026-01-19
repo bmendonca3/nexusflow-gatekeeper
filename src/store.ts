@@ -1,3 +1,4 @@
+/***FILE_CONTENT_START***/
 /**
  * NexusFlow Gatekeeper - State Store
  *
@@ -113,7 +114,7 @@ let _cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
 // ============================================
 
 export const useNexusStore = create<NexusStore>()(
-  persist(
+  persist<NexusStore>(
     (set, get) => ({
       // Initial State
       nodes: initialNodes,
@@ -394,27 +395,28 @@ export const useNexusStore = create<NexusStore>()(
       /**
        * Custom merge for Map/Set serialization
        */
-      merge: (persistedState, currentState) => {
+      merge: (persistedState: Partial<NexusStore> | null, currentState: NexusStore): NexusStore => {
         if (!persistedState) return currentState;
 
-        const converted = { ...currentState };
+        const converted: NexusStore = { ...currentState } as NexusStore;
+        const psAny = persistedState as any;
 
-        if (persistedState.pendingMessages) {
-          const map = new Map();
-          Object.entries(persistedState.pendingMessages).forEach(([key, value]) => {
-            map.set(key, value);
+        if (psAny.pendingMessages) {
+          const map = new Map<string, PendingMessage>();
+          Object.entries(psAny.pendingMessages).forEach(([key, value]) => {
+            map.set(key, value as PendingMessage);
           });
           converted.pendingMessages = map;
         }
 
-        if (persistedState.appliedMessageIds) {
-          converted.appliedMessageIds = new Set(persistedState.appliedMessageIds);
+        if (psAny.appliedMessageIds) {
+          converted.appliedMessageIds = new Set<string>(psAny.appliedMessageIds as string[]);
         }
 
         return converted;
       },
-      onRehydrateStorage: () => (state) => {
-        if (typeof window === 'undefined') return;
+      onRehydrateStorage: () => (state?: NexusStore) => {
+        if (typeof window === 'undefined' || !state) return;
 
         // Initialize transport listener
         const listenerChannel = getChannel();
@@ -507,7 +509,8 @@ function sendReliableMessageInternal<T>(
 // EXPORTS
 // ============================================
 
-export { getTransportType, TransportType };
+export { getTransportType };
+export type { TransportType };
 export const robotAlphaPath: { x: number; y: number }[] = [
   { x: 100, y: 100 },
   { x: 150, y: 150 },
@@ -516,3 +519,4 @@ export const robotAlphaPath: { x: number; y: number }[] = [
   { x: 200, y: 100 },
   { x: 150, y: 100 },
 ];
+/***FILE_CONTENT_END***/

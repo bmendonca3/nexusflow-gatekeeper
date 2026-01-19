@@ -91,8 +91,6 @@ export function closeBroadcastChannel(): void {
 // WEBSOCKET (Production)
 // ============================================
 
-let _wsAuthToken: string | null = null;
-
 /**
  * Initialize WebSocket connection
  */
@@ -103,7 +101,6 @@ export async function initWebSocket(
   if (typeof window === 'undefined') return null;
 
   _transportType = 'websocket';
-  _wsAuthToken = authToken;
 
   try {
     const { io } = await import('socket.io-client');
@@ -179,7 +176,7 @@ export function sendViaTransport(message: ReliableMessage): void {
  * Send an acknowledgement via the current transport
  */
 export function sendAck(messageId: string, senderId: string): void {
-  const ack: ReliableMessage = {
+  const ack: ReliableMessage<{ messageId: string }> = {
     id: generateMessageId(),
     type: 'ACKNOWLEDGEMENT',
     payload: { messageId },
@@ -191,7 +188,7 @@ export function sendAck(messageId: string, senderId: string): void {
 
   if (_transportType === 'websocket' && _socket && _socketConnected) {
     const socket = _socket as { emit: (event: string, msg: ReliableMessage) => void };
-    socket.emit('message:ack', { messageId, senderId });
+    socket.emit('message:ack', ack);
   } else {
     sendViaBroadcastChannel(ack);
   }
@@ -226,4 +223,4 @@ export function cleanupTransport(): void {
   closeWebSocket();
 }
 
-export { ReliableMessage as Message };
+export type { ReliableMessage as Message };

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -14,9 +14,9 @@ import ReactFlow, {
   Position,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useNexusStore, NodeState } from './store';
+import { useNexusStore } from './store';
 import { useChaosConfig } from './chaosConfig';
-import { Shield, AlertTriangle, Activity, Zap, Settings, BarChart3 } from 'lucide-react';
+import { Shield, AlertTriangle, Activity, Zap } from 'lucide-react';
 import MetricsDashboard from './components/MetricsDashboard';
 import { logger } from './utils/logger';
 import './App.css';
@@ -27,7 +27,7 @@ const RoboticNodeComponent: React.FC<NodeProps> = ({ data, id }) => {
   const isWarning = data.state === 'warning';
 
   return (
-    <div className={`robotic-node ${data.state}`} data-testid={`node-${id}`}>
+    <div className={`robotic-node ${data.state}`} data-testid={`node-${id}`}> 
       <Handle type="target" position={Position.Top} />
       <div className="node-header">
         {isEmergency ? (
@@ -93,18 +93,7 @@ const initialEdges: Edge[] = [
   { id: 'e2-5', source: 'robot-beta', target: 'robot-epsilon', animated: true },
 ];
 
-// Predefined path for Robot-Alpha
-const robotAlphaPath = [
-  { x: 100, y: 100 },
-  { x: 150, y: 150 },
-  { x: 200, y: 200 },
-  { x: 250, y: 150 },
-  { x: 200, y: 100 },
-  { x: 150, y: 100 },
-];
-
 // Channel for receiving messages (sending is handled by store's ACK loop)
-// Lazy initialization to work with test mocks
 let _appChannel: BroadcastChannel | null = null;
 function getAppChannel(): BroadcastChannel {
   if (!_appChannel) {
@@ -117,7 +106,6 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { nodes: storeNodes, setNodeState } = useNexusStore();
-  const initialized = useRef(false);
 
   // Sync store with React Flow nodes
   useEffect(() => {
@@ -137,26 +125,16 @@ export default function App() {
   }, [storeNodes, setNodes]);
 
   // Listen for BroadcastChannel messages (cross-tab sync)
-  // PHASE 3: Now receives ReliableMessage format with ACK loop
-  // FIX: Use handleReliableMessage which updates state WITHOUT re-broadcasting
-  // Previously, setNodeState was called here which caused an infinite message loop
   const { handleReliableMessage, acknowledgeMessage } = useNexusStore();
 
   useEffect(() => {
     const appChannel = getAppChannel();
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
-
-      // Use handleReliableMessage to update state WITHOUT re-broadcasting
-      // This prevents the infinite echo loop that occurred when setNodeState was used
       const handled = handleReliableMessage(message);
-
-      // Send acknowledgement if message was handled and wasn't an ACK itself
       if (handled && message.type !== 'ACKNOWLEDGEMENT') {
         acknowledgeMessage(message.id);
       }
-
-      // Log for debugging
       if (message.type === 'NODE_STATE_CHANGE') {
         logger.debug({ nodeId: message.payload.nodeId, state: message.payload.state, msgId: message.id }, 'Received NODE_STATE_CHANGE');
       } else if (message.type === 'STATE_SYNC') {
@@ -176,8 +154,15 @@ export default function App() {
       setNodes((nds) =>
         nds.map((node) => {
           if (node.id === 'robot-alpha') {
-            const newPos = robotAlphaPath[pathIndex];
-            pathIndex = (pathIndex + 1) % robotAlphaPath.length;
+            const newPos = [
+              { x: 100, y: 100 },
+              { x: 150, y: 150 },
+              { x: 200, y: 200 },
+              { x: 250, y: 150 },
+              { x: 200, y: 100 },
+              { x: 150, y: 100 },
+            ][pathIndex];
+            pathIndex = (pathIndex + 1) % 6;
             return { ...node, position: newPos };
           }
           return node;
@@ -194,9 +179,6 @@ export default function App() {
   );
 
   const changeNodeState = (nodeId: string, state: NodeState) => {
-    // PHASE 3: THE HEALER PROTOCOL
-    // setNodeState now uses the ACK Loop with automatic retry
-    // No manual broadcasting needed - the store handles reliable messaging
     setNodeState(nodeId, state);
     logger.info({ nodeId, state }, 'Initiating state change with ACK loop');
   };
@@ -212,7 +194,6 @@ export default function App() {
           <p>Cyber-Physical Digital Twin Dashboard</p>
         </div>
         <div className="header-right">
-          {/* Chaos Mode Toggle */}
           <button
             className={`chaos-toggle ${chaosConfig.chaosEnabled ? 'active' : ''}`}
             onClick={() => chaosConfig.setChaosEnabled(!chaosConfig.chaosEnabled)}
@@ -222,70 +203,22 @@ export default function App() {
             <span>Chaos {chaosConfig.chaosEnabled ? 'ON' : 'OFF'}</span>
           </button>
 
-          {/* Metrics Toggle */}
           <MetricsDashboard />
         </div>
       </div>
 
-      {/* Chaos Control Panel */}
       {showChaosPanel && (
         <div className="chaos-panel">
           <div className="chaos-panel-header">
             <h3><Zap size={16} /> Chaos Configuration</h3>
             <button className="chaos-panel-close" onClick={() => setShowChaosPanel(false)}>×</button>
           </div>
-
-          <div className="chaos-controls">
-            <div className="chaos-control">
-              <label>
-                Block Rate: {chaosConfig.blockRate}%
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={chaosConfig.blockRate}
-                  onChange={(e) => chaosConfig.setBlockRate(parseInt(e.target.value))}
-                  disabled={!chaosConfig.chaosEnabled}
-                />
-              </label>
-            </div>
-
-            <div className="chaos-control">
-              <label>
-                Latency: {chaosConfig.latencyMs}ms
-                <input
-                  type="range"
-                  min="0"
-                  max="1000"
-                  step="50"
-                  value={chaosConfig.latencyMs}
-                  onChange={(e) => chaosConfig.setLatencyMs(parseInt(e.target.value))}
-                  disabled={!chaosConfig.chaosEnabled}
-                />
-              </label>
-            </div>
-
-            <div className="chaos-control">
-              <label>
-                Error Rate: {chaosConfig.errorRate}%
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={chaosConfig.errorRate}
-                  onChange={(e) => chaosConfig.setErrorRate(parseInt(e.target.value))}
-                  disabled={!chaosConfig.chaosEnabled}
-                />
-              </label>
-            </div>
-
-            <button
-              className="chaos-reset"
-              onClick={() => chaosConfig.reset()}
-            >
-              Reset to Defaults
-            </button>
-          </div>
+          <button
+            className="chaos-reset"
+            onClick={() => chaosConfig.reset()}
+          >
+            Reset to Defaults
+          </button>
         </div>
       )}
 
@@ -305,13 +238,6 @@ export default function App() {
           aria-pressed="true"
         >
           Set Robot-Alpha NORMAL
-        </button>
-        <button
-          className="control-btn chaos"
-          onClick={() => setShowChaosPanel(!showChaosPanel)}
-          title="Configure Chaos Settings"
-        >
-          <Settings size={16} />
         </button>
       </div>
 
