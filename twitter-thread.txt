@@ -1,0 +1,140 @@
+================================================================================
+TWEET 1 (Hook)
+================================================================================
+I built a Cyber-Physical Digital Twin dashboard with MiniMax 🎯
+
+[dashboard-normal.png]
+
+5 robot nodes. Real-time state sync. Chaos engineering controls.
+
+Here's how it went 🧵
+
+================================================================================
+TWEET 2 (The Prompt)
+================================================================================
+Started with a simple prompt:
+
+"Build a React dashboard with React Flow showing 5 robots. When I click a button, one robot changes color."
+
+MiniMax generated the whole scaffold in 30 seconds.
+
+================================================================================
+TWEET 3 (The Architecture)
+================================================================================
+Then I got ambitious.
+
+"Add a Healer Protocol with ACK loop, retry logic, and duplicate detection."
+
+MiniMax wrote the reliable messaging layer.
+
+================================================================================
+TWEET 4 (The Code)
+================================================================================
+The Healer Protocol (ACK Loop):
+
+// 1. Track pending messages
+const pendingMessages = new Map();
+pendingMessages.set(message.id, {
+  message,
+  acknowledged: false,
+  lastAttempt: Date.now(),
+  attempts: 0,
+});
+
+// 2. Retry loop runs every 300ms
+setInterval(() => {
+  pendingMessages.forEach((pending, messageId) => {
+    if (pending.acknowledged) return;
+
+    // Check timeout
+    if (now - pending.lastAttempt < ACK_TIMEOUT_MS) return;
+
+    // Max retries exceeded?
+    if (pending.attempts >= MAX_RETRY_ATTEMPTS) {
+      pending.acknowledged = true; // Give up
+      return;
+    }
+
+    // Retry
+    sendViaTransport(pending.message);
+    pending.attempts++;
+    pending.lastAttempt = Date.now();
+  });
+}, ACK_TIMEOUT_MS);
+
+// 3. Receiver sends ACK + deduplication
+if (appliedMessageIds.has(message.id)) {
+  sendAck(message.id); // Already seen, resend ACK
+  return true;
+}
+applyMessage(message);
+appliedMessageIds.add(message.id);
+sendAck(message.id);
+
+Sender: [msg] → wait(ACK) → retry if timeout
+Receiver: apply → [ACK] → track ID (dedup)
+Both: interval loop checks pending messages
+
+================================================================================
+TWEET 5 (The Visuals)
+================================================================================
+[dashboard-emergency.png]
+
+Click "Emergency" → Robot turns red → State synced across all clients via BroadcastChannel or WebSocket
+
+The "Healer Protocol" ensures every state change is acknowledged.
+
+================================================================================
+TWEET 6 (The Chaos)
+================================================================================
+"Add chaos engineering - packet loss and latency simulation"
+
+Now I can test how the ACK loop handles network failures in real-time.
+
+Controls:
+• Packet loss rate (0-100%)
+• Min/Max latency (ms)
+
+Perfect for testing resilience.
+
+================================================================================
+TWEET 7 (The Reality Check)
+================================================================================
+It wasn't all smooth.
+
+• Map/Set serialization broke TypeScript strict mode
+• Truncated test files from a bad merge
+• Multiple iteration prompts to fix type errors
+
+AI helps. You still need to debug.
+
+================================================================================
+TWEET 8 (The Result)
+================================================================================
+1,500+ lines of TypeScript:
+• Zustand store with persistence
+• Dual transport (BroadcastChannel + WebSocket)
+• Full Playwright E2E tests
+• CI/CD with passing builds
+
+Built in days with MiniMax. Not weeks.
+
+GitHub: https://github.com/bmendonca3/nexusflow-gatekeeper
+
+================================================================================
+IMAGES NEEDED:
+================================================================================
+• dashboard-normal.png (screenshot of dashboard in normal state)
+• dashboard-emergency.png (screenshot with Robot-Alpha in red/emergency state)
+
+Both in: /Users/brianmendonca/.playwright-mcp/
+
+================================================================================
+POSTING TIPS:
+================================================================================
+• Post one tweet every 1-2 hours
+• Include the image with each relevant tweet
+• Engage with replies (like, reply)
+• The thread will automatically link together
+
+================================================================================
