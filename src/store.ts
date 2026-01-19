@@ -395,7 +395,7 @@ export const useNexusStore = create<NexusStore>()(
       /**
        * Custom merge for Map/Set serialization
        */
-      merge: (persistedState: Partial<NexusStore> | null, currentState: NexusStore): NexusStore => {
+      merge: (persistedState: unknown, currentState: NexusStore): NexusStore => {
         if (!persistedState) return currentState;
 
         const converted: NexusStore = { ...currentState } as NexusStore;

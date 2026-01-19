@@ -5,7 +5,7 @@ import react from 'eslint-plugin-react';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-    { ignores: ['dist'] },
+    { ignores: ['dist', 'tests'] },
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommended],
         files: ['**/*.{ts,tsx}'],

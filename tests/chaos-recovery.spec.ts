@@ -137,7 +137,7 @@ async function mockUnderstandImage(imagePath: string, prompt: string): Promise<s
 // ============================================
 
 // Track frame drops for verification
-let frameDrops: Array<{ timestamp: string; frame: string; direction: string }> = [];
+const frameDrops: Array<{ timestamp: string; frame: string; direction: string }> = [];
 
 /**
  * PHASE 2 CHECKLIST 1.2: Frame Drop Confirmation
