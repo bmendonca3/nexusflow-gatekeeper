@@ -14,7 +14,7 @@ import ReactFlow, {
   Position,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useNexusStore } from './store';
+import { useNexusStore, NodeState } from './store';
 import { useChaosConfig } from './chaosConfig';
 import { Shield, AlertTriangle, Activity, Zap } from 'lucide-react';
 import MetricsDashboard from './components/MetricsDashboard';

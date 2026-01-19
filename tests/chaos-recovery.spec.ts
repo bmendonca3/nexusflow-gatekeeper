@@ -5,7 +5,6 @@ import { analyzeWithMiniMax, parseColorState } from './vision-mcp';
 
 // ACK Loop constants (matching store.ts)
 const MAX_RETRY_ATTEMPTS = 5;
-const ACK_TIMEOUT_MS = 300;
 
 /**
  * NexusFlow Gatekeeper - Phase 2: The Chaos Loop
@@ -48,8 +47,6 @@ async function mockWebSearch(query: string): Promise<{
   organic: Array<{ title: string; link: string; snippet: string; date: string }>;
   related_searches: Array<{ query: string }>;
 }> {
-  console.log(`[WebSearch-MOCK] Query: "${query}"`);
-
   // Return mock search results based on query type
   const mockResults: Record<string, Array<{ title: string; link: string; snippet: string; date: string }>> = {
     'websocket': [
@@ -1004,7 +1001,7 @@ test.describe('Phase 2: The Chaos Loop', () => {
    */
   function makeGONoGoDecision(
     conflictDetected: boolean,
-    diagnosticReport: DiagnosticReport
+    _diagnosticReport: DiagnosticReport
   ): VisualGhostReport['gatekeeperDecision'] {
     if (conflictDetected) {
       return {

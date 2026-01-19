@@ -144,8 +144,6 @@ export async function verifyVisualSync(
   expectedState: 'normal' | 'warning' | 'emergency',
   timeoutMs: number = 500
 ): Promise<{ match: boolean; description: string }> {
-  const startTime = Date.now();
-
   // Wait for potential sync delay
   await shadowUser.getObserverPage().waitForTimeout(timeoutMs);
 
