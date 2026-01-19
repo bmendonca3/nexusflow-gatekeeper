@@ -340,7 +340,6 @@ export async function verifyVisualSyncWithMCP(
 
     // Extract position if available
     const positionA = parsePosition(analysisA);
-    const _positionB = parsePosition(analysisB);
 
     return {
       differences: synchronized ? [] : ['Visual state mismatch between Commander and Observer'],

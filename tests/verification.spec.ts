@@ -105,9 +105,6 @@ test.describe('1. Multi-Context Isolation (ShadowUser Class)', () => {
     await localPage.goto('http://localhost:3000');
     await localPage.waitForTimeout(500);
 
-    // Get process info (mock check)
-    const _pid = 1234;
-
     // Cleanup
     await localContext.close();
     await localBrowser.close();
