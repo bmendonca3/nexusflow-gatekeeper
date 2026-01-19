@@ -16,11 +16,8 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'commander',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'observer',
+      name: 'smoke',
+      testMatch: /smoke\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
   ],
